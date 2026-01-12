@@ -1,0 +1,11 @@
+export default {
+  node_version: '20',
+  graphs: {
+    hyperliquid_agent: './src/graph.ts:graph',
+  },
+  auth: {
+    path: './src/auth.ts:auth',
+  },
+  env: '.env',
+  dependencies: ['.'],
+};

@@ -24,6 +24,7 @@
     "docker:full:logs": "docker compose -f docker-compose.full.yml logs -f"
   },
   "dependencies": {
+    "@langchain/langgraph-cli": "^1.1.2",
     "tslib": "~2.8",
     "@langchain/core": "^0.3.78",
     "@langchain/langgraph": "^0.4.9",

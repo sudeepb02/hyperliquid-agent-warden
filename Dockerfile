@@ -33,6 +33,7 @@ RUN yarn add --dev typescript @types/node
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/langgraph.json ./langgraph.json
+COPY --from=builder /app/langgraph.config.mjs ./langgraph.config.mjs
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 
 # Create empty .env file (environment variables are passed via docker-compose)
@@ -51,8 +52,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Install LangGraph CLI globally (pin latest requested version)
-RUN npm install -g @langchain/langgraph-cli@1.1.2
-
-# Run the agent server using the global CLI
-CMD ["langgraph", "dev", "--host", "0.0.0.0", "--port", "8000", "--no-browser"]
+# Run the agent server using the project-local LangGraph CLI
+CMD ["npx", "@langchain/langgraph-cli", "dev", "--config", "/app/langgraph.json", "--host", "0.0.0.0", "--port", "8000", "--no-browser"]
