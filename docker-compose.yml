@@ -1,0 +1,35 @@
+services:
+  # Simple standalone hyperliquid agent
+  # No database or Redis needed for stateless requests
+  hyperliquid-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hyperliquid-agent
+    ports:
+      - "8000:8000"
+    environment:
+      # Required API Keys
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+      # Agent API Key (for authentication)
+      AGENT_API_KEY: ${AGENT_API_KEY}
+
+      # Optional: Model configuration
+      MODEL_NAME: ${MODEL_NAME:-gpt-4o-mini}
+      TEMPERATURE: ${TEMPERATURE:-0}
+
+      # Optional: LangSmith tracing
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-hyperliquid-agent}
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+
+      # Server configuration
+      NODE_ENV: production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
